@@ -36,7 +36,7 @@ public class FaxMachine extends GamePiece {
    */
   public void draw(Graphics g) {
     g.setColor(Color.PINK);
-    g.fillRect(getPos().x - 10, getPos().y - 10, 20, 20);
+    g.fillRect(getPos().x - 11, getPos().y - 11, 22, 22);
     
     g.setFont(new Font("Consolas", 0, 18));
     g.setColor(Color.BLACK);

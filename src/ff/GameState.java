@@ -15,8 +15,10 @@ public class GameState {
   private Player player;
   private ArrayList<FaxDocument> documents;
   private ArrayList<FaxMachine> machines;
+  
   private ArrayList<TimeExtender> timeExs;
   private boolean canAddTE;
+  private int totalTimeExtended;
   
   private Random rng = new Random();
   private int currDocIdx;
@@ -53,6 +55,7 @@ public class GameState {
     
     this.timeExs = new ArrayList<TimeExtender>();
     this.canAddTE = true;
+    this.totalTimeExtended = 0;
     
     this.currDocIdx = -1;
     
@@ -172,7 +175,7 @@ public class GameState {
       
       for (int i = 0; i < this.timeExs.size(); i++) {
         if (this.timeExs.get(i).getPos().equals(this.player.getPos())) {
-          this.startTime += this.timeExs.get(i).getAmount();
+          this.totalTimeExtended += this.timeExs.get(i).getAmount();
           this.timeExs.remove(i);
           i--;
         }
@@ -192,10 +195,10 @@ public class GameState {
     if (this.timeLeft > 0 && !gameWon) {
       long elapsedSysTime = System.nanoTime() - this.sysStartTime;
       this.elapsedTime = (int)(elapsedSysTime / 1000000000);
-      this.timeLeft = this.startTime - elapsedTime;
+      this.timeLeft = this.startTime - this.elapsedTime + this.totalTimeExtended;
       
       if (canAddTE && this.elapsedTime % 10 == 0 && this.elapsedTime > 0) {
-        this.timeExs.add(new TimeExtender(generateRandomPosn(), rng.nextInt(5) + 1));
+        this.timeExs.add(new TimeExtender(generateRandomPosn(), 5));
         this.canAddTE = false;
       }
       
@@ -230,6 +233,7 @@ public class GameState {
     
     this.timeExs = new ArrayList<TimeExtender>();
     this.canAddTE = true;
+    this.totalTimeExtended = 0;
     
     this.currDocIdx = -1;
     
@@ -271,6 +275,7 @@ public class GameState {
     
     this.timeExs = new ArrayList<TimeExtender>();
     this.canAddTE = true;
+    this.totalTimeExtended = 0;
     
     this.currDocIdx = -1;
     

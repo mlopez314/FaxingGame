@@ -15,8 +15,10 @@ import javax.swing.Timer;
 public class Canvas extends JPanel implements KeyListener, ActionListener {
 
   private GameState gs;
-  private Timer tm = new Timer(100, this);
+  private Timer tm = new Timer(10, this);
   private KeysPressed keys;
+  private int keyDelay;
+  private int keyTime;
   
   /**
    * Constructor for canvas that adds a KeyListener, GameState, and KeysPressed.
@@ -26,6 +28,8 @@ public class Canvas extends JPanel implements KeyListener, ActionListener {
     addKeyListener(this);
     this.gs = new GameState();
     this.keys = new KeysPressed();
+    this.keyDelay = 5;
+    this.keyTime = 0;
     tm.start();
   }
   
@@ -59,7 +63,21 @@ public class Canvas extends JPanel implements KeyListener, ActionListener {
   
   @Override
   public void actionPerformed(ActionEvent arg0) {
-    gs.updateKeyPress(keys.getKeys());
+    
+    if (!keys.getKeys().isEmpty()) {
+      if (this.keyTime == 0) {
+        gs.updateKeyPress(keys.getKeys());
+      }
+      
+      this.keyTime += 1;
+      
+      if (this.keyTime > this.keyDelay) {
+        this.keyTime = 0;
+      }
+    } else {
+      this.keyTime = 0;
+    }
+    
     gs.updateTimer();
     repaint();
   }

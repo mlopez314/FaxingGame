@@ -45,7 +45,7 @@ public class FaxDocument extends GamePiece {
    */
   public void draw(Graphics g) {
     g.setColor(Color.CYAN);
-    g.fillRect(getPos().x - 10, getPos().y - 10, 20, 20);
+    g.fillRect(getPos().x - 9, getPos().y - 9, 18, 18);
     
     g.setFont(new Font("Consolas", 0, 18));
     g.setColor(Color.BLACK);
