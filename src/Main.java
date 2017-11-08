@@ -9,7 +9,7 @@ import ff.Canvas;
  */
 public class Main {
   public static void main(String args[]) {
-    JFrame frame = new JFrame("Faxing Game v0.2.2");
+    JFrame frame = new JFrame("Faxing Game v0.3");
     frame.setSize(800, 800);
     frame.setLocationRelativeTo(null);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
