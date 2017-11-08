@@ -3,6 +3,10 @@ package ff;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 /**
  * Represents a faxing document by giving it a position and a number.
@@ -10,6 +14,7 @@ import java.awt.Graphics;
 public class FaxDocument extends GamePiece {
   
   private int num;
+  private BufferedImage img;
   
   /**
    * Constructor for FaxDocument.
@@ -20,6 +25,12 @@ public class FaxDocument extends GamePiece {
   public FaxDocument(int num, Posn pos) {
     super(pos);
     this.num = num;
+    
+    try {
+      this.img = ImageIO.read(FaxDocument.class.getResource("/images/document.png"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
   
   /**
@@ -44,8 +55,9 @@ public class FaxDocument extends GamePiece {
    * Draws the document.
    */
   public void draw(Graphics g) {
-    g.setColor(Color.CYAN);
-    g.fillRect(getPos().x - 9, getPos().y - 9, 18, 18);
+    //g.setColor(Color.CYAN);
+    //g.fillRect(getPos().x - 9, getPos().y - 9, 18, 18);
+    g.drawImage(img, getPos().x - 10, getPos().y - 10, null);
     
     g.setFont(new Font("Consolas", 0, 18));
     g.setColor(Color.BLACK);

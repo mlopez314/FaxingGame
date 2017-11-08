@@ -86,12 +86,12 @@ public class GameState {
     
     this.player.draw(g);
     
-    for (FaxDocument fd : this.documents) {
-      fd.draw(g);
-    }
-    
     for (FaxMachine fm : this.machines) {
       fm.draw(g);
+    }
+    
+    for (FaxDocument fd : this.documents) {
+      fd.draw(g);
     }
     
     for (TimeExtender te : this.timeExs) {
@@ -175,10 +175,19 @@ public class GameState {
       
       for (int i = 0; i < this.timeExs.size(); i++) {
         if (this.timeExs.get(i).getPos().equals(this.player.getPos())) {
-          this.totalTimeExtended += this.timeExs.get(i).getAmount();
+          this.totalTimeExtended += 5;
           this.timeExs.remove(i);
           i--;
+          break;
         }
+        
+        if (this.timeExs.get(i).getAmount() == 0) {
+          this.timeExs.remove(i);
+          i--;
+          break;
+        }
+        
+        this.timeExs.get(i).countdown();
       }
       
       if (this.documents.isEmpty()) {
@@ -198,7 +207,7 @@ public class GameState {
       this.timeLeft = this.startTime - this.elapsedTime + this.totalTimeExtended;
       
       if (canAddTE && this.elapsedTime % 10 == 0 && this.elapsedTime > 0) {
-        this.timeExs.add(new TimeExtender(generateRandomPosn(), 5));
+        this.timeExs.add(new TimeExtender(generateRandomPosn(), 50));
         this.canAddTE = false;
       }
       

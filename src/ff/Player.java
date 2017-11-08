@@ -1,14 +1,19 @@
 package ff;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 /**
  * Represents the player with a position.
  */
 public class Player extends GamePiece {
+  
+  private BufferedImage img;
   
   /**
    * Constructor for player.
@@ -17,6 +22,12 @@ public class Player extends GamePiece {
    */
   public Player(Posn pos) {
     super(pos);
+    
+    try {
+      this.img = ImageIO.read(Player.class.getResource("/images/player.png"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
   
   /**
@@ -58,7 +69,8 @@ public class Player extends GamePiece {
    * Draws the player.
    */
   public void draw(Graphics g) {
-    g.setColor(Color.GREEN);
-    g.fillRect(getPos().x - 10, getPos().y - 10, 20, 20);
+    //g.setColor(Color.GREEN);
+    //g.fillRect(getPos().x - 10, getPos().y - 10, 20, 20);
+    g.drawImage(img, getPos().x - 10, getPos().y - 10, null);
   }
 }
