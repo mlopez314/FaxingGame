@@ -43,7 +43,14 @@ public class Canvas extends JPanel implements KeyListener, ActionListener {
   
   @Override
   public void keyPressed(KeyEvent key) {
-    keys.addKey(key.getKeyCode());
+    if (!keys.getKeys().contains(key.getKeyCode()) && keys.getKeys().isEmpty()) {
+      keys.addKey(key.getKeyCode());
+      gs.updateKeyPress(keys.getKeys());
+      gs.recentKeyPress();
+    } else {
+      keys.addKey(key.getKeyCode());
+    }
+    
     repaint();
   }
 

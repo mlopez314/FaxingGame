@@ -52,6 +52,6 @@ public class FaxMachine extends GamePiece {
     
     g.setFont(new Font("Consolas", 0, 18));
     g.setColor(Color.BLACK);
-    g.drawString(Integer.toString(num), getPos().x - 5, getPos().y + 5);
+    g.drawString(Integer.toString(num), getPos().x - 5, getPos().y + 8);
   }
 }

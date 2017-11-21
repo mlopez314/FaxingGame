@@ -13,6 +13,7 @@ import java.util.Random;
 public class GameState {
   
   private Player player;
+  private Boss boss;
   private ArrayList<FaxDocument> documents;
   private ArrayList<FaxMachine> machines;
   
@@ -34,11 +35,14 @@ public class GameState {
   private int round;
   private int points;
   
+  private boolean recentKeyPress;
+  
   /**
    * Constructor for GameState.
    */
   public GameState() {
     this.player = new Player(this.generateRandomPosn());
+    this.boss = new Boss(this.generateRandomPosn(), 1);
     
     this.machines = new ArrayList<FaxMachine>();
     for (int i = 1; i <= 5; i++) {
@@ -61,7 +65,7 @@ public class GameState {
     
     this.sysStartTime = System.nanoTime();
     
-    this.startTime = 75;
+    this.startTime = 100;
     this.timeLeft = this.startTime;
     this.elapsedTime = 0;
     
@@ -70,6 +74,8 @@ public class GameState {
     
     this.round = 1;
     this.points = 0;
+    
+    this.recentKeyPress = false;
   }
   
   /**
@@ -81,10 +87,17 @@ public class GameState {
     g.setColor(Color.WHITE);
     g.fillRect(0, 0, 800, 800);
     
+    g.setColor(Color.LIGHT_GRAY);
+    g.fillRect(50, 10, 720, 720);
+    
+    g.setColor(Color.WHITE);
+    g.fillRect(50, 10, 720, this.timeLeft * (720 / this.startTime));
+    
     g.setColor(Color.BLACK);
     g.drawRect(50, 10, 720, 720);
     
     this.player.draw(g);
+    this.boss.draw(g);
     
     for (FaxMachine fm : this.machines) {
       fm.draw(g);
@@ -139,14 +152,19 @@ public class GameState {
    * @param keyCodes the list of key codes
    */
   public void updateKeyPress(ArrayList<Integer> keyCodes) {
-    
     if (keyCodes.contains(KeyEvent.VK_ESCAPE)) {
       this.reset();
     }
     
-    if (this.timeLeft > 0) {
+    if (this.timeLeft > 0 && !this.gameLost) {
       if (this.currDocIdx > -1) {
-        this.player.move(keyCodes);
+        
+        if (this.recentKeyPress == false) {
+          this.player.move(keyCodes);
+        } else {
+          this.recentKeyPress = false;
+        }
+        
         this.documents.get(currDocIdx).follow(this.player);
         
         
@@ -162,7 +180,12 @@ public class GameState {
         }
         
       } else {
-        this.player.move(keyCodes);
+        
+        if (this.recentKeyPress == false) {
+          this.player.move(keyCodes);
+        } else {
+          this.recentKeyPress = false;
+        }
         
         boolean foundDoc = false;
         for (int i = 0; !foundDoc && i < this.documents.size(); i++) {
@@ -218,6 +241,18 @@ public class GameState {
       if (this.timeLeft == 0) {
         this.gameLost = true;
       }
+      
+      if (this.elapsedTime % 2 == 0 && this.elapsedTime > 0 && !this.gameLost) {
+        this.boss.chase(player);
+      }
+      
+      if (this.elapsedTime % 2 != 0 && this.elapsedTime > 0 && !this.gameLost) {
+        this.boss.resetChaseDist();
+      }
+      
+      if (this.player.getPos().equals(this.boss.getPos()) && this.elapsedTime > 1) {
+        this.gameLost = true;
+      }
     }
   }
   
@@ -226,6 +261,7 @@ public class GameState {
    */
   public void reset() {
     this.player = new Player(this.generateRandomPosn());
+    this.boss = new Boss(this.generateRandomPosn(), 1);
     
     this.machines = new ArrayList<FaxMachine>();
     for (int i = 1; i <= 5; i++) {
@@ -248,7 +284,7 @@ public class GameState {
     
     this.sysStartTime = System.nanoTime();
     
-    this.startTime = 75;
+    this.startTime = 100;
     this.timeLeft = this.startTime;
     this.elapsedTime = 0;
     
@@ -257,6 +293,8 @@ public class GameState {
     
     this.round = 1;
     this.points = 0;
+    
+    this.recentKeyPress = false;
   }
   
   /**
@@ -268,6 +306,7 @@ public class GameState {
    */
   public void reset(int newTimer, int round, int points) {
     this.player = new Player(this.generateRandomPosn());
+    this.boss = new Boss(this.generateRandomPosn(), round);
     
     this.machines = new ArrayList<FaxMachine>();
     for (int i = 1; i <= 5; i++) {
@@ -299,5 +338,11 @@ public class GameState {
     
     this.round = round;  
     this.points = points;
+    
+    this.recentKeyPress = false;
+  }
+
+  public void recentKeyPress() {
+    this.recentKeyPress = true;
   }
 }
