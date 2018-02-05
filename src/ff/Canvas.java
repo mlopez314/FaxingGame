@@ -17,6 +17,7 @@ public class Canvas extends JPanel implements KeyListener, ActionListener {
   private GameState gs;
   private Timer tm = new Timer(100, this);
   private KeysPressed keys;
+  private boolean isPaused;
   
   /**
    * Constructor for canvas that adds a KeyListener, GameState, and KeysPressed.
@@ -26,7 +27,18 @@ public class Canvas extends JPanel implements KeyListener, ActionListener {
     addKeyListener(this);
     this.gs = new GameState();
     this.keys = new KeysPressed();
+    this.isPaused = false;
     tm.start();
+  }
+  
+  public void togglePause() {
+    this.isPaused = !this.isPaused;
+    
+    if (this.isPaused) {
+      tm.stop();
+    } else {
+      tm.restart();
+    }
   }
   
   @Override
@@ -39,19 +51,29 @@ public class Canvas extends JPanel implements KeyListener, ActionListener {
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
     gs.draw(g);
+    
+    if (this.isPaused) {
+      g.drawString("Paused", 250, 250);
+    }
   }
   
   @Override
   public void keyPressed(KeyEvent key) {
-    if (!keys.getKeys().contains(key.getKeyCode()) && keys.getKeys().isEmpty()) {
-      keys.addKey(key.getKeyCode());
-      gs.updateKeyPress(keys.getKeys());
-      gs.recentKeyPress();
-    } else {
-      keys.addKey(key.getKeyCode());
-    }
     
-    repaint();
+    if (key.getKeyCode() == KeyEvent.VK_P) {
+      togglePause();
+      repaint();
+    } else if (!this.isPaused) {
+      if (!keys.getKeys().contains(key.getKeyCode()) && keys.getKeys().isEmpty()) {
+        keys.addKey(key.getKeyCode());
+        gs.updateKeyPress(keys.getKeys());
+        gs.recentKeyPress();
+      } else {
+        keys.addKey(key.getKeyCode());
+      }
+      
+      repaint();
+    }
   }
 
   @Override
@@ -68,7 +90,7 @@ public class Canvas extends JPanel implements KeyListener, ActionListener {
   private long elapsedTime = System.nanoTime();
   
   @Override
-  public void actionPerformed(ActionEvent arg0) {
+  public void actionPerformed(ActionEvent arg0) {  
     this.elapsedTime = System.nanoTime() - currSysTime;
     this.currSysTime = System.nanoTime();
     gs.updateKeyPress(keys.getKeys());   
